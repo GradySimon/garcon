@@ -1,4 +1,4 @@
-import functools, pkgutils, importlib
+import functools, pkgutil, importlib, logging
 
 
 class PluginManager:
@@ -15,25 +15,18 @@ class PluginManager:
         """
         Checks disk to refresh the set of installed plugins.
         """
-        plugin_package_names = [pkg[1] for pkg in pkgutils.walk_packages(self._plugin_path) if pkg[2]]
-        imported_plugin_packages = [importlib.import_module(pkg) for pkg in plugin_package_names]
-        self._active_agents = filter(is_agent, imported_plugin_packages)
+        plugin_package_names = [pkg[1] for pkg in pkgutil.walk_packages([self._plugin_path]) if pkg[2]]
+        loaded_plugins = set()
+        for package_name in plugin_package_names:
+            loaded_plugins.add(importlib.import_module(package_name))
+            logging.info("Loaded plugin: %s" % package_name)
+        self._active_agents = filter(is_agent, loaded_plugins)
 
     def get_active_agents(self):
         """
         Returns a set of the currently active plugins.
         """
-        _refresh_plugin_set()
         return self._active_agents
-
-    @staticmethod
-    def _is_agent(plugin_package):
-        """
-        Returns True iff plugin_package is an agent plugin.
-
-        For now, all plugins are agents, so this always returns True.
-        """
-        return True
 
 
 @functools.total_ordering
@@ -51,3 +44,11 @@ class AgentBase:
 
     def __lt__(self, other):
         return self.priority < other.priority
+
+
+def is_agent(plugin_package):
+    """
+    Returns True iff plugin_package is an agent plug
+    For now, all plugins are agents, so this always returns True.
+    """
+    return True
