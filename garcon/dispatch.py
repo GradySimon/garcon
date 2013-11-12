@@ -1,6 +1,3 @@
-from queue import PriorityQueue
-
-
 class Dispatcher:
     """
     Accepts commands from the user, dispatches them to the appropriate plugin.
