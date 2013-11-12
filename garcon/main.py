@@ -1,5 +1,5 @@
 import os
-import dispatch, plugin
+import dispatch, plugin, console
 
 def start():
     plugin_path = get_plugin_path()
@@ -12,4 +12,7 @@ def get_plugin_path():
     """
     path = os.path.join(os.environ['HOME'], ".garcon")
     os.makedirs(path, exist_ok=True)
+
+if __name__ == '__main__':
+    start()
     
