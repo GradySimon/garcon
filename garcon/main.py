@@ -1,3 +1,4 @@
+import os
 import dispatch, plugin
 
 def start():
@@ -9,5 +10,6 @@ def get_plugin_path():
     """
     Returns the path of the directory to look for plugins
     """
-    pass
-
+    path = os.path.join(os.environ['HOME'], ".garcon")
+    os.makedirs(path, exist_ok=True)
+    
