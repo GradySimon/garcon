@@ -1,13 +1,17 @@
-def accept_commands_forever(dispatcher):
-    print_intro()
-    while True:
-        command = get_command()
-        dispatcher.dispatch(command)
+class ConsoleInterface():
+    def start(self, dispatcher):
+        print_intro()
+        while True:
+            command = get_command()
+            self.dispatcher.dispatch(command)
+
+    def initialize(self, app):
+        self.dispatcher = app.dispatcher
 
 
-def print_intro():
+def print_intro(self):
     print("How may Garçon be of service?")
 
 
-def get_command():
+def get_command(self):
     return input('Garçon!>>> ')

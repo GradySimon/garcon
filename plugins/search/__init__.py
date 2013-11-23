@@ -1,4 +1,4 @@
 from . import agent
 
 name = "Search"
-agents = [agent.SearchAgent()]
+agents = [agent.SearchAgent]
