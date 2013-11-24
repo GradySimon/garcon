@@ -1,4 +1,4 @@
-from . import agent
+from . import search_agents
 
 name = "Search"
-agents = [agent.SearchAgent]
+agents = [search_agents.SearchAgent]

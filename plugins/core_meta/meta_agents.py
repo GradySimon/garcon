@@ -1,13 +1,18 @@
 import re
 import garcon.plugin
-import garcon.dispatch
+
 
 class DoAgainAgent(garcon.plugin.AgentBase):
     name = "DoAgainAgent"
     priority = 4
 
     def can_handle(self, command):
-        return command.lower() in ["do that again", "again"]
+        return command.strip().lower() in ["do that again", "do again", "again"]
+
+    def handle(self, command):
+        dispatcher = self.plugin_manager.get_dispatcher()
+        previous_command = dispatcher.get_command_history(how_many=1)[0]
+        dispatcher.dispatch_command(previous_command)
 
 
 class DoMultipleTimesAgent(garcon.plugin.AgentBase):
@@ -23,5 +28,5 @@ class DoMultipleTimesAgent(garcon.plugin.AgentBase):
         if match:
             command_to_repeat = match.group(1)
             times_to_repeat = int(match.group(2))
-            for i in xrange(times_to_repeat):
-                
+            for i in range(times_to_repeat):
+                self.plugin_manager.get_dispatcher().dispatch_command(command_to_repeat)

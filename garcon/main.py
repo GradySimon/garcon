@@ -71,8 +71,10 @@ class App:
         self.interface = interface
 
     def start(self):
-        self.dispatcher.initialize(self)
+        # Note: dispatch needs to initialize after plugin manager (how could I refactor?)
         self.plugin_manager.initialize(self)
+        self.dispatcher.initialize(self)
+        self.interface.initialize(self)
         self.interface.start()
 
 if __name__ == '__main__':

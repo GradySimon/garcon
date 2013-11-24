@@ -6,6 +6,7 @@ def build_bing_url(query):
     query_part = '+'.join(query.strip().split(' '))
     return "http://bing.com/search?q=%s" % (query_part)
 
+
 class SearchAgent(garcon.plugin.AgentBase):
     name = "SearchAgent"
     priority = 4
@@ -17,3 +18,4 @@ class SearchAgent(garcon.plugin.AgentBase):
         query = command.replace("bing", "")
         url = build_bing_url(query)
         webbrowser.open(url)
+        

@@ -13,8 +13,10 @@ class PluginManager:
 
     def __init__(self, plugin_path):
         self._plugin_path = plugin_path
+        self._agents = []
+        self._services = []
 
-    def initalize(self, app):
+    def initialize(self, app):
         self.app = app
         self._refresh_plugin_set()
 
@@ -39,14 +41,17 @@ class PluginManager:
     def get_active_agents(self):
         """
         Returns a set of the currently active plugins.
-        """0
-        return [agent.get_instance() for agent in self._agents]
+        """
+        return [agent.get_instance() for agent in self._agents.values()]
 
     def get_dispatcher(self):
         return self.app.dispatcher
 
     def _wrap_agent(self, agent_class):
-        return _Agent(self, agent_class)
+        return _Agent(agent_class, self)
+
+    def _wrap_service(self, service_class):
+        return None
 
 
 def _extract_services(plugins):
@@ -83,6 +88,25 @@ def _has_services(plugin_package):
     return hasattr(plugin_package, "services")
 
 
+class _Agent:
+    """
+    Internal class that represents a single agent.
+    """
+    def __init__(self, agent_class, plugin_manager):
+        self.agent_class = agent_class
+        self.plugin_manager = plugin_manager
+        self.active_instance = None
+
+    def get_instance(self):
+        if self.active_instance is None:
+            self._instantiate()
+        return self.active_instance
+
+    def _instantiate(self):
+        logging.debug("Instantiating agent: %s" % (str(self.agent_class)))
+        self.active_instance = self.agent_class(self.plugin_manager)
+
+
 @functools.total_ordering
 class AgentBase():
     """
@@ -108,21 +132,3 @@ class ServiceBase():
     The base class for all services.
     """
     pass
-
-
-class _Agent:
-    """
-    Internal class that represents a single agent.
-    """
-    def __init__(self, agent_class, plugin_manager):
-        self.agent_class = agent_class
-        self.plugin_manager = plugin_manager
-        self.active_instance = None
-
-    def get_instance(self):
-        if self.active_instance is None:
-            self.instantiate()
-        return self.active_instance
-
-    def _instantiate(self):
-        self.active_instance = self.agent_class(self.plugin_manager)
